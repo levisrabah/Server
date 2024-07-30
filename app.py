@@ -3,7 +3,7 @@ from flask_jwt_extended import JWTManager, jwt_required, create_access_token, ge
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from config import create_app, db
-from models import User, Admin, Meal, Transaction, Category
+from models import User, Admin, Meal, Orders, Category
 from datetime import datetime
 
 app = create_app()
@@ -130,11 +130,11 @@ def place_order():
     if 'meal_id' not in data:
         return jsonify({'message': 'Missing meal_id'}), 400
 
-    transaction = Transaction(
+    Orders = Orders(
         user_id=get_jwt_identity(),
         meal_id=data['meal_id']
     )
-    db.session.add(transaction)
+    db.session.add(Orders)
     db.session.commit()
     return jsonify({'message': 'Order placed successfully'}), 201
 
@@ -142,7 +142,7 @@ def place_order():
 @jwt_required()
 def get_orders():
     user_id = get_jwt_identity()
-    orders = Transaction.query.filter_by(user_id=user_id).all()
+    orders = Orders.query.filter_by(user_id=user_id).all()
     return jsonify([{
         'id': order.id,
         'meal_id': order.meal_id,
@@ -152,7 +152,7 @@ def get_orders():
 @app.route('/orders/admin', methods=['GET'])
 @jwt_required()
 def get_orders_admin():
-    orders = Transaction.query.all()
+    orders = Orders.query.all()
     return jsonify([{
         'id': order.id,
         'user_id': order.user_id,
