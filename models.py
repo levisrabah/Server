@@ -9,7 +9,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(128), nullable=False)
+    password = db.Column(db.String(128), nullable=False)
     role = db.Column(db.String(20), nullable=False)  # role 'client' or 'admin'
     transactions = db.relationship('Transaction', back_populates='user', lazy=True)
     admin = db.relationship('Admin', back_populates='user', uselist=False, cascade="all, delete-orphan")
