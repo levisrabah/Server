@@ -11,7 +11,7 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
     role = db.Column(db.String(20), nullable=False)  # role 'client' or 'admin'
-    orders = db.relationship('Orders', back_populates='user', lazy=True)
+    transactions = db.relationship('Transaction', back_populates='user', lazy=True)
     admin = db.relationship('Admin', back_populates='user', uselist=False, cascade="all, delete-orphan")
 
     def set_password(self, password):
@@ -37,19 +37,19 @@ class Meal(db.Model):
     price = db.Column(db.Float, nullable=False)
     admin_id = db.Column(db.Integer, db.ForeignKey('Admin.id'), nullable=False)
     admin = db.relationship('Admin', back_populates='meals')
-    orders = db.relationship('Orders', back_populates='meal', lazy=True)
+    transactions = db.relationship('Transaction', back_populates='meal', lazy=True)
     category_id = db.Column(db.Integer, db.ForeignKey('Category.id'), nullable=True)
     category = db.relationship('Category', back_populates='meals')
 
-class Orders(db.Model):
-    __tablename__ = 'Orders'
+class Transaction(db.Model):
+    __tablename__ = 'Transaction'
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('User.id'), nullable=False)
     meal_id = db.Column(db.Integer, db.ForeignKey('Meal.id'), nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-    user = db.relationship('User', back_populates='orders')
-    meal = db.relationship('Meal', back_populates='orders')
+    user = db.relationship('User', back_populates='transactions')
+    meal = db.relationship('Meal', back_populates='transactions')
 
 class Category(db.Model):
     __tablename__ = 'Category'
